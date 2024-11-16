@@ -1,0 +1,52 @@
+name: Auto Update Workflow
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "*/30 * * * *"
+
+jobs:
+  auto_commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Modify Flow File
+        run: |
+          d='DATE '`date '+%Y-%m-%d %H:%M:%S'`
+          echo $d >> FLOW
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "auto-update-bot@gmail.com"
+          git config --local user.name "Auto Update Bot"
+          git add FLOW
+          
+          arr[0]="Automatic flow update completed"
+          arr[1]="Flow file refreshed successfully"
+          arr[2]="System check passed: Flow updated"
+          arr[3]="Flow log update detected"
+          arr[4]="Routine update completed for flow file"
+          arr[5]="New timestamp added to flow file"
+          arr[6]="Auto-update: Workflow executed smoothly"
+          arr[7]="Commit triggered by automated process"
+          arr[8]="System log: Update successful"
+          arr[9]="Scheduled update applied to flow file"
+
+          rand=$[$RANDOM % ${#arr[@]}]
+          
+          git commit -m "${arr[$rand]}"
+
+      - name: Push Changes to Repository
+        uses: ad-m/github-push-action@master
+        with:
+          force: true
+          directory: "."
+          github_token: ${{ secrets.GITHUB_TOKEN }}
